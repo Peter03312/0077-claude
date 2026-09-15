@@ -1,0 +1,34 @@
+services:
+  api:
+    build: .
+    image: fabric-club-api:latest
+    ports:
+      # 宿主机端口由 API_PORT 指定，默认 8000；容器内恒为 8000
+      - "${API_PORT:-8000}:8000"
+    environment:
+      APP_DB_PATH: /data/events.db
+    volumes:
+      - api-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health', timeout=3).status == 200 else 1)"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+      start_period: 2s
+    restart: unless-stopped
+
+  verify:
+    image: fabric-club-api:latest
+    build: .
+    command: ["python", "/srv/scripts/verify.py"]
+    environment:
+      API_BASE_URL: http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: "no"
+    volumes:
+      - ./scripts:/srv/scripts:ro
+
+volumes:
+  api-data:

@@ -1,1 +1,21 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 本地运行的 SQLite 数据与 WAL 旁车文件
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# 编辑器/系统
+.DS_Store
+.idea/
+.vscode/
 *.tsbuildinfo
